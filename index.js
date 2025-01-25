@@ -21,7 +21,7 @@ mongoose.connect(process.env.MONGO_URI)
     
 })  
 
-const app = express()
+const app = express()  
 
 // const _dirname = path.resolve();
 
