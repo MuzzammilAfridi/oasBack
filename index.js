@@ -26,6 +26,12 @@ const app = express()
 // const _dirname = path.resolve();
 app.set('trust proxy', 1); // Trust Render's proxy
 
+
+app.use(cors({
+    origin: 'https://oasifront.onrender.com',
+    credentials: true,
+}));
+
 app.use(cookieParser())
 app.use(express.json())
 app.use(bodyParser.json());
@@ -50,9 +56,9 @@ app.use(fileUpload({ useTempFiles: true })); // For file uploads
 
 
 
-app.use(cors({ origin: 'https://oasifront.onrender.com',
-    credentials: true, 
- }));
+// app.use(cors({ origin: 'https://oasifront.onrender.com',
+//     credentials: true, 
+//  }));
 
 
 
