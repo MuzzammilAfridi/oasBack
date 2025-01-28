@@ -185,10 +185,10 @@ router.post('/register', async (req, res) => {
   
           // Store the token as a cookie
           res.cookie("token", token, {
-              httpOnly: true, // Prevent access to the cookie via JavaScript
-              secure: process.env.NODE_ENV === 'production', // Only send the cookie over HTTPS in production
-              sameSite: 'Strict', // Prevent CSRF
-              maxAge: 3600 * 1000, // Cookie expires in 1 hour
+            //   httpOnly: true, // Prevent access to the cookie via JavaScript
+            //   secure: process.env.NODE_ENV === 'production', // Only send the cookie over HTTPS in production
+            //   sameSite: 'Strict', // Prevent CSRF
+            //   maxAge: 3600 * 1000, // Cookie expires in 1 hour
           });
 
           if(email == 'muzzammil@gmail.com' && password == 'muzz'){
