@@ -227,14 +227,31 @@ res.cookie("token", token, {
   
 
   
-router.get('/logout', (req, res)=>{
-    res.clearCookie("token")
+// router.get('/logout', (req, res)=>{
+//     res.clearCookie("token")
 
-     res.status(200).json({
-        "success" : true,
-        "message" : "You are loggout now"
-    })
-})
+//      res.status(200).json({
+//         "success" : true,
+//         "message" : "You are loggout now"
+//     })
+// })
+
+
+
+
+router.get('/logout', (req, res) => {
+    res.clearCookie('token', {
+        httpOnly: true, // Ensures the cookie is only accessible by the server
+        secure: true, // Ensures the cookie is sent over HTTPS
+        sameSite: 'None', // Required for cross-origin cookie usage
+        path: '/', // Ensure it clears the cookie for the root path
+    });
+
+    res.status(200).json({
+        success: true,
+        message: 'You are logged out now',
+    });
+});
 
 
 router.post('/admin',isAdmin, async (req, res) => {
