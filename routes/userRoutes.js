@@ -191,7 +191,6 @@ router.post('/register', async (req, res) => {
         //     //   maxAge: 3600 * 1000, // Cookie expires in 1 hour
         //   });
 
-        app.set('trust proxy', 1); // Trust Render's proxy
 
 res.cookie("token", token, {
   httpOnly: true,

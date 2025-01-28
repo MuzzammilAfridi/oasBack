@@ -24,6 +24,7 @@ mongoose.connect(process.env.MONGO_URI)
 const app = express()  
 
 // const _dirname = path.resolve();
+app.set('trust proxy', 1); // Trust Render's proxy
 
 app.use(cookieParser())
 app.use(express.json())
