@@ -58,13 +58,14 @@ const allowedOrigins = ['https://oasifront.onrender.com'];
 
 app.use(cors({
     origin: (origin, callback) => {
-        if (allowedOrigins.includes(origin)) {
+        if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
+            console.error(`Blocked by CORS: ${origin}`);
             callback(new Error('Not allowed by CORS'));
         }
-    },
-    credentials: true,
+    }
+    // credentials: true,
 }));
 
 
