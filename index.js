@@ -48,9 +48,24 @@ app.use(fileUpload({ useTempFiles: true })); // For file uploads
 //     credentials : true
 // }))
 
-app.use(cors({ origin: 'https://oasifront.onrender.com',
-    credentials: true, 
- }));
+
+
+// app.use(cors({ origin: 'https://oasifront.onrender.com',
+//     credentials: true, 
+//  }));
+
+const allowedOrigins = ['https://oasifront.onrender.com'];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+}));
 
 
 // app.options('*', cors())
