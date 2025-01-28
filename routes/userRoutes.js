@@ -318,7 +318,7 @@ router.post('/forgot-password', async (req, res) => {
           from: 'rohit860049@gmail.com',
           to: `${user.email}`,
           subject: 'Reset Your Password',
-          text: `Click here to reset your password: http://localhost:7070/reset-password/${token}`,
+          text: `Click here to reset your password: https://oasback.onrender.com/reset-password/${token}`,
       };
 
       transporter.sendMail(mailOptions, function (error, info) {
