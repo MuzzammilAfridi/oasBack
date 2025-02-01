@@ -2,6 +2,7 @@ const express = require('express')
 const bcrypt = require('bcryptjs');
 const User = require('../models/user')
 const Product = require('../models/product')
+const Address = require('../models/address')
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 
@@ -49,6 +50,7 @@ const isAuthenticated = (req, res, next) => {
 const isAdmin = (req, res, next) => {
     try {
         const { token } = req.cookies;
+console.log(token);
 
         // Check if token exists
         if (!token) {
@@ -60,6 +62,7 @@ const isAdmin = (req, res, next) => {
 
         // Decode the JWT token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+// console.log(decoded);
 
         // Check if the user's email matches the admin email
         if (decoded.email !== 'muzzammil@gmail.com') {
@@ -192,13 +195,13 @@ router.post('/register', async (req, res) => {
         //   });
 
 
-res.cookie("token", token, {
-  httpOnly: true,
-  secure: true,
-  sameSite: 'None',
-  maxAge: 3600 * 1000,
-});
 
+res.cookie("token", token, {
+//   httpOnly: true,
+//   secure: true,
+//   sameSite: 'None',
+//   maxAge: 3600 * 1000,
+});
 
           if(email == 'muzzammil@gmail.com' && password == 'muzz'){
             return res.status(200).json({
@@ -238,7 +241,6 @@ res.cookie("token", token, {
 
 
 
-
 router.get('/logout', (req, res) => {
     res.clearCookie('token', {
         httpOnly: true, // Ensures the cookie is only accessible by the server
@@ -252,6 +254,7 @@ router.get('/logout', (req, res) => {
         message: 'You are logged out now',
     });
 });
+
 
 
 router.post('/admin',isAdmin, async (req, res) => {
@@ -414,7 +417,79 @@ router.post('/reset-password/:token', async (req, res) => { // Corrected the rou
   }
 });
 
-  
+
+router.post("/user/address", async (req, res) => {
+    try {
+        const { token } = req.cookies;
+        if (!token) {
+            return res.status(401).json({ success: false, message: "Unauthorized: No token provided" });
+        }
+
+        // Verify the token
+        const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findOne({ email: decoded.email });
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        // Create a new address
+        const newAddress = new Address({
+            fullName: req.body.fullName,
+            phone: req.body.phone,
+            street: req.body.street,
+            city: req.body.city,
+            state: req.body.state,
+            zip: req.body.zip,
+        });
+
+        await newAddress.save();
+
+        // Update the user with the address ObjectId
+        user.address = newAddress._id;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Address added successfully",
+            address: newAddress,
+        });
+    } catch (error) {
+        console.error("Error adding address:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+});
+
+
+
+router.get("/user", async (req, res) => {
+    try {
+        const { token } = req.cookies;
+        if (!token) {
+            return res.status(401).json({ success: false, message: "Unauthorized: No token provided" });
+        }
+
+        // Verify the token
+        const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+
+        // Find user and populate address
+        const user = await User.findOne({ email: decoded.email }).populate("address");
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        res.status(200).json({
+            success: true,
+            user,
+        });
+    } catch (error) {
+        console.error("Error fetching user:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+});
+
+
 
 
  

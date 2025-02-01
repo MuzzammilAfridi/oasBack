@@ -24,6 +24,15 @@ const productSchema = new mongoose.Schema({
   timestamps: true, // Automatically adds createdAt and updatedAt fields
 });
 
+// Add middleware to send notification when a new product is created
+productSchema.post('save', function (doc) {
+  // Emit a push notification here after a new product is added to the database
+  if (doc) {
+    // Emit event to notify clients via WebSocket
+    doc.constructor.model('Product').emit('newProductNotification', doc);
+  }
+});
+
 const Product = mongoose.model('Product', productSchema);
 
 module.exports = Product;
