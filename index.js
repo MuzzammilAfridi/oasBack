@@ -58,8 +58,8 @@ app.use(fileUpload({ useTempFiles: true })); // For file uploads
 app.use(cors({
   origin: ['https://oasback.onrender.com', 'https://oasifront.onrender.com'], // Allow both backend & frontend
   credentials: true, // Allow cookies and authentication headers
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow necessary methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allow necessary headers
+  // methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow necessary methods
+  // allowedHeaders: ['Content-Type', 'Authorization'], // Allow necessary headers
 }));
 
  
