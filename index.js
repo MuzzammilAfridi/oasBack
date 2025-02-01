@@ -53,37 +53,19 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true })); // For form URL-encoded data
 app.use(fileUpload({ useTempFiles: true })); // For file uploads
 
-// app.use((req, res, next) => {
-//     res.setHeader('Access-Control-Allow-Origin', 'https://oasis-rho-pink.vercel.app'); // Allow your frontend origin
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST'); // Allow required HTTP methods
-//     res.setHeader('Access-Control-Allow-Credentials', 'true'); // Allow credentials (cookies, authorization headers, etc.)
-//     next();
-//   });
 
-// app.use(cors({
-//                 //   https://oasis-rho-pink.vercel.app'
-//                 //   https://oasis-rho-pink.vercel.app/
-//     // origin : ['https://oasis-rho-pink.vercel.app'],
-//     origin : ['https://oasis-rho-pink.vercel.app', 'http://localhost:5173/'],
-//     methods : ['GET', 'POST'],
-//     credentials : true
-// }))
 
-app.use(cors({ origin: 'https://oasback.onrender.com',
-    credentials: true, 
- }));
+app.use(cors({
+  origin: ['https://oasback.onrender.com', 'https://oasifront.onrender.com'], // Allow both backend & frontend
+  credentials: true, // Allow cookies and authentication headers
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow necessary methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow necessary headers
+}));
 
  
 
 
-// app.options('*', cors())
-
-// const corsOptions = {
-//     origin: 'https://oasis-rho-pink.vercel.app',  // Add your frontend URL here
-//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//     credentials: true,  // If you are using cookies or authentication
-// };   
-// app.use(cors(corsOptions));  
+ 
   
 
 
@@ -94,10 +76,7 @@ app.use('/socket', socketRoutes(io));
 app.use('/product', productRoutes)
 app.use('/order', orderRoutes);
 
-// app.use(experss.static(path.join(_dirname, "/Oasis/dist")))
-// app.get('*', (req, res)=>{
-//     res.sendFile(path.resolve(_dirname, "Oasis", "dist", "index.html"))
-// })
+
 
 
 
@@ -114,49 +93,3 @@ server.listen(PORT, () => {
 
 
 
-// const express = require('express');
-// const mongoose = require('mongoose');
-// const userRoutes = require('./routes/userRoutes');
-// const productRoutes = require('./routes/productRoutes');
-// const cors = require('cors');
-// const cookieParser = require('cookie-parser');
-// const bodyParser = require('body-parser');
-// require('dotenv').config();
-
-// mongoose
-//   .connect(process.env.MONGO_URI)
-//   .then(() => console.log('MongoDB is connected successfully'))
-//   .catch((err) => console.log(err));
-
-// const app = express();
-
-// const allowedOrigins = ['https://oasis-rho-pink.vercel.app', 'http://localhost:5173'];
-
-// app.use(
-//   cors({
-//     origin: (origin, callback) => {
-//       if (!origin || allowedOrigins.includes(origin)) {
-//         callback(null, true);
-//       } else {
-//         callback(new Error('Not allowed by CORS'));
-//       }
-//     },
-//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//     credentials: true,
-//   })
-// );
-
-// app.use(cookieParser());
-// app.use(express.json());
-// app.use(bodyParser.json());
-
-// // Routes
-// app.use('/', userRoutes);
-// app.use('/product', productRoutes);
-
-// const PORT = process.env.PORT || 7070;
-// const HOST = '0.0.0.0';
-
-// app.listen(PORT, () => {
-//   console.log(`Server is running on http://localhost:${PORT}`);
-// });
