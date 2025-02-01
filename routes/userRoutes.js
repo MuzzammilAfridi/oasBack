@@ -196,12 +196,11 @@ router.post('/register', async (req, res) => {
 
 
 
-res.cookie("token", token, {
-//   httpOnly: true,
-//   secure: true,
-//   sameSite: 'None',
-//   maxAge: 3600 * 1000,
-});
+        res.cookie("token", token, {
+            httpOnly: true,  // Prevent JavaScript access (important for security)
+            secure: true,    // Ensure it's sent only over HTTPS (needed for Render)
+            sameSite: "None", // Required for cross-site requests
+        });
 
           if(email == 'muzzammil@gmail.com' && password == 'muzz'){
             return res.status(200).json({
