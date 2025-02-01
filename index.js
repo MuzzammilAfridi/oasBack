@@ -31,7 +31,7 @@ const app = express()
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
-    origin: 'https://oasback.onrender.com', // Client URL (adjust as needed)
+    origin: 'https://oasifront.onrender.com', // Client URL (adjust as needed)
     methods: ['GET', 'POST'],
   },
 });
