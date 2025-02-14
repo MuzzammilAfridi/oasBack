@@ -29,13 +29,6 @@ mongoose.connect(process.env.MONGO_URI)
 const app = express()
 
 
-// Serve static files from the React frontend (Vite build output)
-app.use(express.static(path.join(__dirname, 'OasisFront/dist')));
-
-// Handle React client-side routing
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'OasisFront/dist', 'index.html'));
-});
 
 
 
@@ -71,6 +64,9 @@ app.use(cors({
   credentials: true, // Allow cookies to be sent
 }));
 
+
+
+
  
 
 
@@ -87,6 +83,12 @@ app.use('/order', orderRoutes);
 
 
 
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// Handle React routing, return index.html for any unknown routes (important for frontend routes)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 
 const PORT = process.env.PORT || 7070;
