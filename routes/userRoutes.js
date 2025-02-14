@@ -103,7 +103,7 @@ console.log(token);
 
 
 router.get('/', (req, res)=>{
-    res.send("hii this is Lassun fassun")
+    res.send("hii this is Lassun fassun and nothing")
 })
 router.get('/lassun', (req, res)=>{
     res.send("hii this is Lassun  bhai tere nhi pta hoga")

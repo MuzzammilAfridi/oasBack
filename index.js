@@ -28,6 +28,16 @@ mongoose.connect(process.env.MONGO_URI)
 
 const app = express()
 
+
+// Serve static files from the React frontend build folder
+app.use(express.static(path.join(__dirname, 'OasisFront/build')));
+
+// Handle React client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'OasisFront/build', 'index.html'));
+});
+
+
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
