@@ -103,7 +103,7 @@ console.log(token);
 
 
 router.get('/', (req, res)=>{
-    res.send("hii this is Lassun fassun and nothing")
+    res.send("hii this is Lassun fassun")
 })
 router.get('/lassun', (req, res)=>{
     res.send("hii this is Lassun  bhai tere nhi pta hoga")
@@ -196,11 +196,12 @@ router.post('/register', async (req, res) => {
 
 
 
-        res.cookie("token", token, {
-            httpOnly: true,  // Prevent JavaScript access (important for security)
-            secure: true,    // Ensure it's sent only over HTTPS (needed for Render)
-            sameSite: "None", // Required for cross-site requests
-        });
+res.cookie("token", token, {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'None',
+  maxAge: 3600 * 1000,
+});
 
           if(email == 'muzzammil@gmail.com' && password == 'muzz'){
             return res.status(200).json({
@@ -255,39 +256,48 @@ router.get('/logout', (req, res) => {
 });
 
 
-
-router.post('/admin',isAdmin, async (req, res) => {
-  const { name, price, description } = req.body;
-  const file = req.files?.file; // Optional chaining to ensure file exists
-  console.log(file , name, price);
+router.post('/admin', isAdmin, async (req, res) => {
+    const { name, price, description, category } = req.body;
+    const file = req.files?.file; // Ensure file is present
   
-
-  if (!file) {
-    return res.status(400).json({ success: false, message: 'File is required' });
-  }
-
-  try {
-    // Upload the file to Cloudinary
-    const result = await cloudinary.uploader.upload(file.tempFilePath);
-
-    // Create the product using the Cloudinary file URL
-    const product = await Product.create({
-      name,
-      price,
-      description,
-      img: result.secure_url, // Save Cloudinary URL
-    });
-
-    // Respond with success and product details
-    res.status(200).json({
-      success: true,
-      product,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Server error' });
-  }
-});
+    console.log(file, name, price, category);
+  
+    // Allowed categories (ensure they match your Product model)
+    const allowedCategories = ['Furniture', 'Electronics', 'Fashion', 'Beauty', 'Home Appliances', 'Sports', 'Toys', 'Books'];
+  
+    // Validate required fields
+    if (!file) {
+      return res.status(400).json({ success: false, message: 'File is required' });
+    }
+    if (!category || !allowedCategories.includes(category)) {
+      return res.status(400).json({ success: false, message: 'Invalid or missing category' });
+    }
+  
+    try {
+      // Upload the file to Cloudinary
+      const result = await cloudinary.uploader.upload(file.tempFilePath);
+  
+      // Create the product using the Cloudinary file URL
+      const product = await Product.create({
+        name,
+        price,
+        description,
+        img: result.secure_url, // Save Cloudinary URL
+        category, // Save category
+      });
+  
+      // Respond with success and product details
+      res.status(201).json({
+        success: true,
+        message: 'Product created successfully',
+        product,
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, message: 'Server error' });
+    }
+  });
+  
 // })
 
 

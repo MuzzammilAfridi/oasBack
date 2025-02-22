@@ -1,37 +1,36 @@
 const mongoose = require('mongoose');
 
-const productSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Product name is required'],
-    trim: true,
+const productSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, 'Product name is required'],
+      trim: true,
+    },
+    price: {
+      type: Number,
+      required: [true, 'Product price is required'],
+      min: [0, 'Price must be a positive number'],
+    },
+    description: {
+      type: String,
+      required: [true, 'Product description is required'],
+      trim: true,
+    },
+    img: {
+      type: String,
+      required: [true, 'File path is required'],
+    },
+    category: {
+      type: String,
+      required: [true, 'Product category is required'],
+      enum: ['Furniture', 'Electronics', 'Fashion', 'Beauty', 'Home Appliances', 'Sports', 'Toys', 'Books'], // Define allowed categories
+    },
   },
-  price: {
-    type: Number,
-    required: [true, 'Product price is required'],
-    min: [0, 'Price must be a positive number'],
-  },
-  description: {
-    type: String,
-    required: [true, 'Product description is required'],
-    trim: true,
-  },
-  img: {
-    type: String,
-    required: [true, 'File path is required'],
-  },
-}, {
-  timestamps: true, // Automatically adds createdAt and updatedAt fields
-});
-
-// Add middleware to send notification when a new product is created
-productSchema.post('save', function (doc) {
-  // Emit a push notification here after a new product is added to the database
-  if (doc) {
-    // Emit event to notify clients via WebSocket
-    doc.constructor.model('Product').emit('newProductNotification', doc);
+  {
+    timestamps: true, // Automatically adds createdAt and updatedAt fields
   }
-});
+);
 
 const Product = mongoose.model('Product', productSchema);
 

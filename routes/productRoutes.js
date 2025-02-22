@@ -7,6 +7,8 @@ const Order = require("../models/order");
 
 // const upload = multer({ dest: 'uploads/' })
 
+const stripe = require("stripe")("sk_test_51Qp9JBRrdmcN18A9pVr7SOwkwDF8fG8sxccx47hdtTsRy9DCoyOPfZcRGKv55ZcxocrNCrUGauSucJqu24ICMK8E00vdhEGcS9")
+
 const router = express.Router()
 
 router.get('/', (req, res)=>{
@@ -272,6 +274,48 @@ router.get("/owner/orders", async (req, res) => {
       res.status(500).json({ error: "Failed to retrieve orders", details: error.message });
   }
 });
+
+
+
+router.post("/create-checkout-session", async (req, res) => {
+  try {
+    const { products } = req.body;
+
+    console.log("Received products:", products); // Check what is being received
+
+    if (!products || products.length === 0) {
+      return res.status(400).json({ error: "No products provided" });
+    }
+
+    const lineItems = products.map((product) => {
+      if (!product.productId || !product.productId.name || !product.productId.price) {
+        throw new Error("Invalid product data");
+      }
+      return {
+        price_data: {
+          currency: "usd",
+          product_data: { name: product.productId.name },
+          unit_amount: product.productId.price * 100,
+        },
+        quantity: product.quantity || 1,
+      };
+    });
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: lineItems,
+      mode: "payment",
+      success_url: "http://localhost:5173/buy",
+      cancel_url: "http://localhost:3000/cancel",
+    });
+
+    res.json({ id: session.id });
+  } catch (error) {
+    console.error("Error creating checkout session:", error.message, error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 
 
