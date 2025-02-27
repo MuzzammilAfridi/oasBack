@@ -7,7 +7,9 @@ const Order = require("../models/order");
 
 // const upload = multer({ dest: 'uploads/' })
 
-const stripe = require("stripe")("sk_test_51Qp9JBRrdmcN18A9pVr7SOwkwDF8fG8sxccx47hdtTsRy9DCoyOPfZcRGKv55ZcxocrNCrUGauSucJqu24ICMK8E00vdhEGcS9")
+
+
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const router = express.Router()
 
@@ -93,6 +95,30 @@ router.get("/allproducts", async(req, res)=>{
     products
   })
 })
+
+
+router.get("/search", async (req, res) => {
+  try {
+    const { query } = req.query;
+
+    if (!query || query.trim() === "") {
+      return res.status(400).json({ message: "Query parameter is required" });
+    }
+
+    const products = await Product.find({
+      $or: [
+        { name: { $regex: `^${query}`, $options: "i" } }, 
+        { description: { $regex: `\\b${query}\\b`, $options: "i" } }, 
+        { category: { $regex: `^${query}`, $options: "i" } },
+      ],
+    }).limit(10); 
+
+    res.json(products);
+  } catch (error) {
+    console.error("❌ Search error:", error);
+    res.status(500).json({ message: "Search failed", error: error.message });
+  }
+});
 
 
 router.get("/:id", async (req, res) => {
@@ -315,6 +341,46 @@ router.post("/create-checkout-session", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+
+
+
+
+// Product Recommendation Route
+router.get("/recommendations/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Find the current product
+        const currentProduct = await Product.findById(id);
+        if (!currentProduct) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        // Find similar products by category, excluding the current product
+        const recommendations = await Product.find({
+            category: currentProduct.category, // Match the same category
+            _id: { $ne: id } // Exclude the current product
+        })
+        .limit(6); // Limit to 6 recommendations
+
+        res.json(recommendations);
+    } catch (error) {
+        console.error("Error fetching recommendations:", error);
+        res.status(500).json({ message: "Error fetching recommendations" });
+    }
+});
+
+
+
+
+
+
+
+
+
+
 
 
 
