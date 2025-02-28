@@ -83,12 +83,12 @@ app.use('/order', orderRoutes);
 
 
 
-app.use(express.static(path.join(__dirname, 'dist')));
+// app.use(express.static(path.join(__dirname, 'dist')));
 
-// Handle React routing, return index.html for any unknown routes (important for frontend routes)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
+// // Handle React routing, return index.html for any unknown routes (important for frontend routes)
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+// });
 
 
 const PORT = process.env.PORT || 7070;
